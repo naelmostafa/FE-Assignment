@@ -1,0 +1,10 @@
+<div class="main-page">
+    <h1>OFFLINE</h1>
+    <div class="iframe-container">
+        <iframe class="iframe" id="white" scrolling="no" [src]="IframeUrl" (load)="onloadIframe($event)"></iframe>
+        <iframe class="iframe" id="black" scrolling="no" [src]="IframeUrl" (load)="onloadIframe($event)"></iframe>
+    </div>
+
+    <button class="btn btn-primary" (click)="startGame()">New Game</button>
+</div>
+

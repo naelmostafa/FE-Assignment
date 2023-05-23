@@ -1,0 +1,6 @@
+<div class="board-container">
+    <h2>{{player!}}</h2>
+    <ngx-chess-board #board [size]="size" [dragDisabled]="dragDisabled" [drawDisabled]="drawDisabled"
+        [lightDisabled]="lightDisabled" [darkDisabled]="darkDisabled" (moveChange)="moveCallback($event)">
+    </ngx-chess-board>
+</div>
