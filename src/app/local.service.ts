@@ -23,4 +23,8 @@ export class LocalService {
     localStorage.clear();
   }
 
+  public isEmpty() {
+    return localStorage.length === 0;
+  }
+
 }

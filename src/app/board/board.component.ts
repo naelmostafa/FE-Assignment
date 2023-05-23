@@ -55,7 +55,7 @@ export class BoardComponent implements OnInit {
   }
 
   public moveCallback(move: MoveChange): void {
-    console.warn('moveCallback', move);
+    console.log('moveCallback', move);
     window.parent.postMessage(
       {
         action: 'movePiece',
@@ -73,20 +73,24 @@ export class BoardComponent implements OnInit {
   }
 
   handleStart(payload: string) {
-    console.warn('Start', payload);
     this.reset();
-    if (payload === 'black') {
-      this.reverse();
-      this.switchDarkDisabled();
-    } else {
-      this.switchLightDisabled();
-    }
-    this.player = payload;
+    this.activateBoard(payload);
   }
 
-  handleResume(payload: string){
-    console.warn('resume', payload);
+  handleResume(payload: any) {
+    this.fen = JSON.parse(payload.state).fen;
+    this.setFen();
+    this.activateBoard(payload.player);
+  }
 
+  activateBoard(payload: string){
+    if (payload === 'black') {
+      this.reverse();
+      this.darkDisabled = false;
+    } else if (payload === 'white') {
+      this.lightDisabled = false;
+    }
+    this.player = payload;
   }
 
   public reset(): void {

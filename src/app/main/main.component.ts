@@ -10,21 +10,16 @@ import { LocalService } from '../local.service';
 export class MainComponent implements OnInit {
 
   private readonly storageKey = 'chess-game';
-  private lastMove!: string;
-
+  private lastMove!: any;
   private el!: HTMLIFrameElement;
   private turn: 'white' | 'black' = 'white';
   IframeUrl!: SafeResourceUrl;
+  disabled!: boolean;
 
   constructor(private sanatizer: DomSanitizer, private localStorage: LocalService) {
   }
 
   ngOnInit() {
-    // check for state
-    const state = this.localStorage.getDate(this.storageKey);
-    if (state) {
-      this.handleOldState(state);
-    }
     this.IframeUrl = this.sanatizer.bypassSecurityTrustResourceUrl('/main/iframepage');
     window.addEventListener('message', this.handleMessage.bind(this));
   }
@@ -66,8 +61,11 @@ export class MainComponent implements OnInit {
   }
 
   startGame() {
-    // select all iframes
     document.querySelectorAll('iframe').forEach(iframe => {
+      if (!this.localStorage.isEmpty()) {
+        this.handleResume(this.localStorage.getDate(this.storageKey));
+        return;
+      }
       iframe.contentWindow?.postMessage(
         {
           action: 'start',
@@ -76,6 +74,8 @@ export class MainComponent implements OnInit {
         '*'
       );
     });
+
+
   }
 
   onloadIframe(event: Event) {
@@ -83,20 +83,31 @@ export class MainComponent implements OnInit {
     this.el.style.height = this.el.contentWindow?.document.body.scrollHeight + 'px';
   }
 
-  handleOldState(state: any) {
+  handleResume(state: any) {
     this.lastMove = state.lastMove;
     document.querySelectorAll('iframe').forEach(iframe => {
       iframe.contentWindow?.postMessage(
         {
           action: 'resume',
-          payload: this.lastMove,
+          payload: {
+            state: this.lastMove,
+            player: iframe.id
+          },
         },
         '*'
       );
     });
   }
 
+  newGame() {
+    this.localStorage.removeDate(this.storageKey);
+    this.startGame();
+  }
+
   resumeGame() {
-    this.handleOldState(this.localStorage.getDate(this.storageKey));
+    if (this.localStorage.isEmpty()) {
+      return;
+    }
+    this.handleResume(this.localStorage.getDate(this.storageKey));
   }
 }
