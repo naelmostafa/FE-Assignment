@@ -38,11 +38,16 @@ export class BoardComponent implements OnInit {
     const { action, payload } = event.data;
     switch (action) {
       case 'movePiece':
-        // this.setFen();
         this.handleMove(payload);
         break;
       case 'start':
         this.handleStart(payload);
+        break;
+      case 'reset':
+        this.reset();
+        break;
+      case 'resume':
+        this.handleResume(payload);
         break;
       default:
         console.warn('Unknown action', action);
@@ -50,7 +55,7 @@ export class BoardComponent implements OnInit {
   }
 
   public moveCallback(move: MoveChange): void {
-    // get the last move;
+    console.warn('moveCallback', move);
     window.parent.postMessage(
       {
         action: 'movePiece',
@@ -61,8 +66,6 @@ export class BoardComponent implements OnInit {
 
   handleMove(payload: string) {
     let move = JSON.parse(payload);
-    console.log(move.move);
-
     if (move.color !== this.player) {
       this.manualMove = move.move;
       this.moveManual();
@@ -70,6 +73,7 @@ export class BoardComponent implements OnInit {
   }
 
   handleStart(payload: string) {
+    console.warn('Start', payload);
     this.reset();
     if (payload === 'black') {
       this.reverse();
@@ -80,8 +84,12 @@ export class BoardComponent implements OnInit {
     this.player = payload;
   }
 
+  handleResume(payload: string){
+    console.warn('resume', payload);
+
+  }
+
   public reset(): void {
-    alert('Resetting board');
     this.boardManager.reset();
     this.fen = this.boardManager.getFEN();
   }

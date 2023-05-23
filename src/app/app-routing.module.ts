@@ -7,6 +7,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
 const routes: Routes = [
   { path: 'main/iframepage', component: BoardComponent },
   { path: 'main', component: MainComponent },
+  // { path: 'online' component: }
   {path : '**', component : WelcomeComponent}
 ];
 

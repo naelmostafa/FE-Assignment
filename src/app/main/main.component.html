@@ -4,7 +4,11 @@
         <iframe class="iframe" id="white" scrolling="no" [src]="IframeUrl" (load)="onloadIframe($event)"></iframe>
         <iframe class="iframe" id="black" scrolling="no" [src]="IframeUrl" (load)="onloadIframe($event)"></iframe>
     </div>
+    
 
-    <button class="btn btn-primary" (click)="startGame()">New Game</button>
+    <div class="btn-group">
+        <button class="btn btn-primary" (click)="startGame()">New Game</button>
+        <button class="btn btn-primary" (click)="resumeGame()">Resume Game</button>
+    </div>
 </div>
 

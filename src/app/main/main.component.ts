@@ -1,5 +1,6 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { LocalService } from '../local.service';
 
 @Component({
   selector: 'app-main',
@@ -8,17 +9,24 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 })
 export class MainComponent implements OnInit {
 
+  private readonly storageKey = 'chess-game';
+  private lastMove!: string;
+
   private el!: HTMLIFrameElement;
   private turn: 'white' | 'black' = 'white';
   IframeUrl!: SafeResourceUrl;
 
-  constructor(private sanatizer: DomSanitizer) {
+  constructor(private sanatizer: DomSanitizer, private localStorage: LocalService) {
   }
 
   ngOnInit() {
+    // check for state
+    const state = this.localStorage.getDate(this.storageKey);
+    if (state) {
+      this.handleOldState(state);
+    }
     this.IframeUrl = this.sanatizer.bypassSecurityTrustResourceUrl('/main/iframepage');
     window.addEventListener('message', this.handleMessage.bind(this));
-    this.startGame();
   }
 
 
@@ -29,13 +37,12 @@ export class MainComponent implements OnInit {
         this.movePiece(payload);
         break;
       case 'ready':
-        this.createNewGame();
+        this.startGame();
     }
   }
 
   movePiece(payload: any) {
     this.turn = this.turn === 'white' ? 'black' : 'white';
-    console.log(this.turn)
     document.querySelectorAll('iframe').forEach(iframe => {
       if (iframe.id !== payload.color) {
         iframe.contentWindow?.postMessage(
@@ -48,21 +55,14 @@ export class MainComponent implements OnInit {
       }
     });
 
-  }
+    this.localStorage.saveDate(this.storageKey, { lastMove: JSON.stringify(payload) });
 
-  sendToIframe() {
+    if (payload.check) {
+      alert(`Check ${payload.color} win`);
+      this.startGame();
+      return;
+    }
 
-  }
-
-  createNewGame() {
-    this.turn = 'white';
-    this.el.contentWindow?.postMessage(
-      {
-        action: 'reset',
-        payload: null,
-      },
-      '*'
-    );
   }
 
   startGame() {
@@ -76,7 +76,6 @@ export class MainComponent implements OnInit {
         '*'
       );
     });
-
   }
 
   onloadIframe(event: Event) {
@@ -84,5 +83,20 @@ export class MainComponent implements OnInit {
     this.el.style.height = this.el.contentWindow?.document.body.scrollHeight + 'px';
   }
 
-}
+  handleOldState(state: any) {
+    this.lastMove = state.lastMove;
+    document.querySelectorAll('iframe').forEach(iframe => {
+      iframe.contentWindow?.postMessage(
+        {
+          action: 'resume',
+          payload: this.lastMove,
+        },
+        '*'
+      );
+    });
+  }
 
+  resumeGame() {
+    this.handleOldState(this.localStorage.getDate(this.storageKey));
+  }
+}
