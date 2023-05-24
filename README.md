@@ -1,27 +1,36 @@
-# ChessApp
+# FE-Assignment
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.11.
+[Chess-Game](https://chess-game-5e2a6.web.app/)
 
-## Development server
+This project is a web-based chess game that consists of two iframes representing two players. The game allows players to make moves on their respective boards, and the moves are synchronized between the iframes using the postMessage API. The project is implemented using Angular and the ngx-chess-board library for rendering the chess boards.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Getting Started
 
-## Code scaffolding
+To get started with the project, follow the instructions below:
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Clone the repository to your local machine.
+Install the dependencies by running the command: npm install.
+Start the development server by running the command: npm start.
+Open your browser and navigate to the specified URL (e.g., <http://localhost:4200>) to access the application.
 
-## Build
+## Game Instructions
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- The main page of the application (`/mainpage`) contains two iframes representing the two players.
 
-## Running unit tests
+- Each player can make moves on their respective board by interacting with the chess pieces.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- When a player makes a move, it is synchronized with the other player's board in real-time.
 
-## Running end-to-end tests
+- The second board is rotated so that black is facing the player.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+- The boards are disabled according to the current turn. When it's white's turn, the second board is disabled, and when it's black's turn, the first board is disabled.
 
-## Further help
+- If a checkmate occurs, an alert is displayed to announce the end of the game. The players can click "Create new game" to reset the board and start a new game.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+- If the browser is closed before the game ends, the current game state is stored in the local storage.
+
+- The state is automatically loaded when the page is reopened, allowing the players to resume the previous unfinished game.
+
+- Communication between the main page and the iframes is done using the postMessage API.
+
+- Local storage is used only for storing the game state between sessions and should not be used for communication.
