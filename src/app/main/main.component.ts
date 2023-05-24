@@ -63,7 +63,7 @@ export class MainComponent implements OnInit {
   startGame() {
     document.querySelectorAll('iframe').forEach(iframe => {
       if (!this.localStorage.isEmpty()) {
-        this.handleResume(this.localStorage.getDate(this.storageKey));
+        this.handleResume(this.localStorage.getData(this.storageKey));
         return;
       }
       iframe.contentWindow?.postMessage(
@@ -74,8 +74,6 @@ export class MainComponent implements OnInit {
         '*'
       );
     });
-
-
   }
 
   onloadIframe(event: Event) {
@@ -85,17 +83,22 @@ export class MainComponent implements OnInit {
 
   handleResume(state: any) {
     this.lastMove = state.lastMove;
-    document.querySelectorAll('iframe').forEach(iframe => {
-      iframe.contentWindow?.postMessage(
-        {
-          action: 'resume',
-          payload: {
-            state: this.lastMove,
-            player: iframe.id
+    const iframes = Array.from(document.querySelectorAll('iframe')) as HTMLIFrameElement[];
+    iframes.forEach(iframe => {
+      try {
+        iframe.contentWindow?.postMessage(
+          {
+            action: 'resume',
+            payload: {
+              state: this.lastMove,
+              player: iframe.id
+            },
           },
-        },
-        '*'
-      );
+          '*'
+        );
+      } catch (error) {
+        console.error(`Error sending message to iframe: ${error}`);
+      }
     });
   }
 
@@ -108,6 +111,6 @@ export class MainComponent implements OnInit {
     if (this.localStorage.isEmpty()) {
       return;
     }
-    this.handleResume(this.localStorage.getDate(this.storageKey));
+    this.handleResume(this.localStorage.getData(this.storageKey));
   }
 }

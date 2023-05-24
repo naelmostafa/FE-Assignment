@@ -9,6 +9,7 @@ import { NgxChessBoardModule } from 'ngx-chess-board';
 import { MainComponent } from './main/main.component';
 import { BoardComponent } from './board/board.component';
 import { WelcomeComponent } from './welcome/welcome.component';
+import { OnlineComponent } from './online/online.component';
 
 
 
@@ -18,6 +19,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
     BoardComponent,
     MainComponent,
     WelcomeComponent,
+    OnlineComponent,
   ],
   imports: [
     BrowserModule,
